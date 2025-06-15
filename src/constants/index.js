@@ -30,6 +30,7 @@ import {
   weather,
   threejs,
   cook,
+  game,
 } from "../assets";
 
 export const navLinks = [
@@ -241,6 +242,27 @@ export const projects = [
     ],
     image: doc,
     source_code_link: "https://ri-mediconsult.vercel.app/",
+  },
+  {
+    name: "Ri-Puzzlet",
+    description:
+    "An interactive AI-powered word puzzle game built with Next.js and React that challenges players with intelligent word guessing gameplay. Features include dual game modes (custom word creation and AI-generated puzzles), Google Gemini AI integration for dynamic word generation, customizable difficulty levels with 3-8 letter words, adjustable attempt limits and time constraints, multiple themed categories (animals, food, technology, sports), real-time feedback with color-coded tile animations, progress tracking with local statistics storage, responsive dark/light mode themes, keyboard and touch input support, and seamless cross-device compatibility for engaging brain training entertainment anywhere, anytime.",
+    tags: [
+    {
+     name: "Next.js",
+     color: "blue-text-gradient",
+    },
+    {
+     name: "React.js",
+     color: "green-text-gradient",
+    },
+    {
+     name: "Generative AI",
+     color: "yellow-text-gradient",
+    }
+    ],
+    image: game,
+    source_code_link: "https://ri-puzzle.vercel.app/",
   },
   {
     name: "RIFILX Movie Website",

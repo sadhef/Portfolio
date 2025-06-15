@@ -35,6 +35,7 @@ import biz from "./biz.webp";
 import blade from "./blade.webp";
 import cook from "./cook.webp";
 import doc from "./doc.webp";
+import game from "./game.webp";
 
 export {
   backend,
@@ -69,6 +70,7 @@ export {
   turf,
   biz,
   doc,
+  game,
   blade,
   cook,
 };
