@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Image from "next/image";
-import { Play, Plus, ExternalLink, ChevronDown, Github, Eye } from 'lucide-react';
+import { Plus, ExternalLink, ChevronDown, Github, Eye } from 'lucide-react';
 
 const ProjectCard = ({ project, onSelect }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -12,14 +12,11 @@ const ProjectCard = ({ project, onSelect }) => {
     description = 'No description available', 
     image, 
     tags = [], 
-    source_code_link, 
-    live_demo_link,
-    completionDate 
+    source_code_link
   } = project;
   
-  const year = completionDate ? new Date(completionDate).getFullYear() : new Date().getFullYear();
   const matchPercent = Math.round(Math.random() * 20 + 80);
-  const demoLink = live_demo_link || source_code_link;
+  const currentYear = new Date().getFullYear();
 
   return (
     <div
@@ -64,8 +61,8 @@ const ProjectCard = ({ project, onSelect }) => {
                     className="w-9 h-9 rounded-full bg-white flex items-center justify-center hover:bg-gray-200 transition"
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (demoLink) {
-                        window.open(demoLink, '_blank');
+                      if (source_code_link) {
+                        window.open(source_code_link, '_blank');
                       }
                     }}
                     title="View Live Demo"
@@ -113,7 +110,7 @@ const ProjectCard = ({ project, onSelect }) => {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-green-500 font-semibold">{matchPercent}% Match</span>
-                  <span className="text-gray-400">{year}</span>
+                  <span className="text-gray-400">{currentYear}</span>
                   <span className="border border-gray-400 px-1.5 py-0.5 text-xs text-gray-400">
                     {tags[0]?.name || 'Project'}
                   </span>

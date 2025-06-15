@@ -2,12 +2,9 @@ import React, { useEffect, useCallback, useMemo, memo } from 'react';
 import Image from "next/image";
 import { X, Github, ExternalLink, Calendar, Code } from 'lucide-react';
 
-// Memoized action button component to prevent unnecessary re-renders
+// Memoized action button component
 const ActionButton = memo(({ onClick, className, children, icon: Icon }) => (
-  <button
-    onClick={onClick}
-    className={className}
-  >
+  <button onClick={onClick} className={className}>
     <Icon size={22} />
     {children}
   </button>
@@ -51,22 +48,8 @@ const TechTag = memo(({ tag, index }) => {
 });
 TechTag.displayName = 'TechTag';
 
-// Memoized quick link component
-const QuickLink = memo(({ href, icon: Icon, children }) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center gap-4 text-gray-300 hover:text-white transition-all duration-200 text-xl p-4 rounded-xl hover:bg-gray-800/50 group"
-  >
-    <Icon size={24} className="group-hover:scale-110 transition-transform" />
-    {children}
-  </a>
-));
-QuickLink.displayName = 'QuickLink';
-
 const ProjectModal = memo(({ project, onClose, isOpen }) => {
-  // Memoized close handler to prevent recreation
+  // Memoized close handler
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -98,7 +81,7 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
     };
   }, [isOpen, handleEscape]);
 
-  // Memoized project data extraction
+  // Memoized project data extraction - using constants structure
   const projectData = useMemo(() => {
     if (!project) return null;
 
@@ -107,15 +90,12 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
       description = 'No description available',
       image,
       tags = [],
-      source_code_link,
-      live_demo_link,
-      completionDate
+      source_code_link
     } = project;
 
-    const year = completionDate ? new Date(completionDate).getFullYear() : new Date().getFullYear();
-    const demoLink = live_demo_link || source_code_link;
+    const year = new Date().getFullYear();
 
-    return { name, description, image, tags, source_code_link, live_demo_link, demoLink, year };
+    return { name, description, image, tags, source_code_link, year };
   }, [project]);
 
   // Memoized features extraction
@@ -128,11 +108,6 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
       const featuresText = desc.split('Features include')[1];
       return featuresText.split('.')[0].split(',').map(f => f.trim()).filter(f => f.length > 0);
     }
-    
-    if (desc.includes('features:')) {
-      const featuresText = desc.split('features:')[1];
-      return featuresText.split('.')[0].split(',').map(f => f.trim()).filter(f => f.length > 0);
-    }
 
     // Generate features based on description content
     const detectedFeatures = [];
@@ -141,20 +116,25 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
       'real-time': 'Real-time functionality',
       'responsive': 'Responsive design',
       'API': 'External API integration',
-      'database': 'Database management',
-      'MongoDB': 'Database management',
-      'payment': 'Payment processing',
+      'booking': 'Real-time booking management',
+      'payments': 'Payment processing',
+      'Razorpay': 'Razorpay payment integration',
+      'Redux': 'State management with Redux',
+      'multilingual': 'Multilingual support',
+      'voice-controlled': 'Voice-controlled instructions',
       'admin': 'Admin dashboard',
-      'mobile': 'Mobile compatibility',
       'timed challenges': 'Timed challenge system',
       'community chat': 'Community chat system',
       'offline mode': 'Offline mode support',
       'cloud dashboard': 'Cloud monitoring dashboard',
-      'progress tracking': 'Progress tracking',
-      'multilingual': 'Multilingual support',
-      'voice-controlled': 'Voice-controlled instructions',
       'video': 'Video consultation system',
-      'telemedicine': 'Telemedicine platform'
+      'telemedicine': 'Telemedicine platform',
+      'HIPAA': 'HIPAA-compliant security',
+      'Docker': 'Containerized deployment',
+      'Kubernetes': 'Kubernetes orchestration',
+      'MongoDB': 'Database management',
+      'Vite': 'Fast build tool',
+      'Bootstrap': 'Responsive UI framework'
     };
 
     Object.entries(featureMap).forEach(([key, value]) => {
@@ -170,12 +150,6 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
 
   // Memoized button handlers
   const handleDemoClick = useCallback(() => {
-    if (projectData?.demoLink) {
-      window.open(projectData.demoLink, '_blank');
-    }
-  }, [projectData?.demoLink]);
-
-  const handleSourceClick = useCallback(() => {
     if (projectData?.source_code_link) {
       window.open(projectData.source_code_link, '_blank');
     }
@@ -184,14 +158,14 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
   // Early return for better performance
   if (!isOpen || !projectData) return null;
 
-  const { name, description, image, tags, source_code_link, demoLink, year } = projectData;
+  const { name, description, image, tags, source_code_link, year } = projectData;
 
   return (
     <div 
       className="fixed inset-0 z-[9999] flex items-start justify-center pt-4 pb-4"
       onClick={handleBackdropClick}
     >
-      {/* Optimized backdrop with reduced blur for better performance */}
+      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/85" />
       
       {/* Modal Content */}
@@ -205,9 +179,9 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
           <X size={24} className="text-white group-hover:scale-110 transition-transform duration-200" />
         </button>
 
-        {/* Optimized scrollable content */}
+        {/* Scrollable content */}
         <div className="max-h-[96vh] overflow-y-auto will-change-scroll">
-          {/* Hero Image - Optimized loading */}
+          {/* Hero Image */}
           <div className="relative h-72 md:h-96">
             <Image
               src={image}
@@ -230,23 +204,13 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
               
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4">
-                {demoLink && (
+                {source_code_link && (
                   <ActionButton
                     onClick={handleDemoClick}
                     className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-bold text-lg shadow-lg"
                     icon={ExternalLink}
                   >
                     View Live
-                  </ActionButton>
-                )}
-                
-                {source_code_link && source_code_link !== demoLink && (
-                  <ActionButton
-                    onClick={handleSourceClick}
-                    className="flex items-center gap-3 bg-gray-700/80 text-white px-8 py-4 rounded-xl hover:bg-gray-600 transition-colors duration-200 font-bold text-lg border border-gray-600"
-                    icon={Github}
-                  >
-                    Source Code
                   </ActionButton>
                 )}
               </div>
@@ -278,7 +242,7 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
                   <p className="text-gray-300 text-xl leading-relaxed">{description}</p>
                 </div>
 
-                {/* Features - Virtualized for better performance */}
+                {/* Features */}
                 {features.length > 0 && (
                   <div>
                     <h3 className="text-white text-3xl font-bold mb-6">Key Features</h3>
@@ -307,15 +271,16 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
                 <div className="bg-gray-900/70 rounded-2xl p-8 border border-gray-800">
                   <h4 className="text-white font-bold text-2xl mb-6">Quick Links</h4>
                   <div className="space-y-4">
-                    {demoLink && (
-                      <QuickLink href={demoLink} icon={ExternalLink}>
+                    {source_code_link && (
+                      <a
+                        href={source_code_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-4 text-gray-300 hover:text-white transition-all duration-200 text-xl p-4 rounded-xl hover:bg-gray-800/50 group"
+                      >
+                        <ExternalLink size={24} className="group-hover:scale-110 transition-transform" />
                         Live Demo
-                      </QuickLink>
-                    )}
-                    {source_code_link && source_code_link !== demoLink && (
-                      <QuickLink href={source_code_link} icon={Github}>
-                        Source Code
-                      </QuickLink>
+                      </a>
                     )}
                   </div>
                 </div>
@@ -347,7 +312,7 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
         </div>
       </div>
 
-      {/* Optimized custom scrollbar styles */}
+      {/* Custom scrollbar styles */}
       <style jsx>{`
         .will-change-scroll::-webkit-scrollbar {
           width: 8px;

@@ -42,33 +42,12 @@ export const navLinks = [
     title: "Work",
   },
   {
-    id: "projects",
-    title: "Projects",
-  },
-  {
     id: "contact",
     title: "Contact",
   },
 ];
 
-export const services = [
-  {
-    title: "Web Developer",
-    icon: web,
-  },
-  {
-    title: "React Native Developer",
-    icon: mobile,
-  },
-  {
-    title: "Backend Developer",
-    icon: backend,
-  },
-  {
-    title: "Content Creator",
-    icon: creator,
-  },
-];
+
 
 export const technologies = [
   {
@@ -133,39 +112,11 @@ export const experiences = [
   },
 ];
 
-export const testimonials = [
-  {
-    testimonial:
-      "I thought it was impossible to make a website as beautiful as our product, but Mohammed proved me wrong.",
-    name: "Sara Lee",
-    designation: "CFO",
-    company: "Acme Co",
-    image: "https://randomuser.me/api/portraits/women/4.jpg",
-  },
-  {
-    testimonial:
-      "I've never met a web developer who truly cares about their clients' success like Mohammed does.",
-    name: "Chris Brown",
-    designation: "COO",
-    company: "DEF Corp",
-    image: "https://randomuser.me/api/portraits/men/5.jpg",
-  },
-  {
-    testimonial:
-      "After Mohammed optimized our website, our traffic increased by 50%. We can't thank them enough!",
-    name: "Lisa Wang",
-    designation: "CTO",
-    company: "456 Enterprises",
-    image: "https://randomuser.me/api/portraits/women/6.jpg",
-  },
-];
-
 export const projects = [
   {
-    id: 1,
     name: "RiField Turf Booking",
     description:
-      "A comprehensive MERN stack turf booking platform featuring multi-portal access, secure authentication, real-time booking management, integrated Razorpay payments, automated notifications, analytics dashboards, and efficient state management using Redux Toolkit. The platform serves both customers and administrators with distinct user experiences.",
+      "A MERN stack turf booking platform with multi-portal access, secure authentication, real-time booking management, Razorpay payments, automated notifications, analytics dashboards, and state management using Redux Toolkit.",
     tags: [
       {
         name: "MERN Stack",
@@ -181,27 +132,12 @@ export const projects = [
       },
     ],
     image: turf,
-    source_code_link: "https://github.com/your-username/rifield-turf-booking",
-    live_demo_link: "https://rifield-web-appuser-65d9.vercel.app",
-    completionDate: "2024-12-01",
-    duration: "3 months",
-    teamSize: 2,
-    features: [
-      "Multi-portal authentication system (User/Admin/Owner)",
-      "Real-time turf availability and booking management",
-      "Integrated Razorpay payment gateway",
-      "Automated email notifications and SMS alerts",
-      "Admin analytics dashboard with booking insights",
-      "Mobile-responsive design with PWA capabilities",
-      "Advanced filtering and search functionality",
-      "Booking history and user profile management"
-    ]
+    source_code_link: "https://rifield-web-appuser-65d9.vercel.app",
   },
   {
-    id: 2,
     name: "COokiFy",
     description: 
-      "A comprehensive recipe discovery platform built with React and Node.js that helps users find recipes based on ingredients they have. Features multilingual support (English, Malayalam, Tamil), voice-controlled cooking instructions, intelligent recipe search with ingredient matching, user reviews and ratings, favorites system, AI chatbot assistance, and detailed nutrition calculation.",
+      "A recipe discovery platform built with React and Node.js that helps users find recipes based on ingredients they have. Features include multilingual support (English, Malayalam, Tamil), voice-controlled cooking instructions, recipe search with ingredient matching, user reviews and ratings, favorites system, chatbot assistance, and recipe nutrition calculation.",
     tags: [
       {
         name: "React.js",
@@ -221,192 +157,132 @@ export const projects = [
       }
     ],
     image: cook,
-    source_code_link: "https://github.com/your-username/cookify",
-    live_demo_link: "https://cookifyy.vercel.app/",
-    completionDate: "2024-10-15",
-    duration: "2.5 months",
-    teamSize: 1,
-    features: [
-      "Multilingual support (English, Malayalam, Tamil)",
-      "Voice-controlled cooking instructions",
-      "Ingredient-based recipe search and matching",
-      "User reviews, ratings, and favorites system",
-      "AI-powered chatbot for cooking assistance",
-      "Detailed nutrition calculation and dietary info",
-      "Social features for recipe sharing",
-      "Offline recipe storage capabilities"
-    ]
+    source_code_link: "https://cookifyy.vercel.app/",
   },
   {
-    id: 3,
     name: "CTF Platform",
     description:
-      "A comprehensive Capture The Flag (CTF) platform with user authentication, timed challenges, admin dashboard, and cloud reporting features. The platform allows users to solve progressive levels of security challenges within time limits. Includes admin capabilities for managing users, challenges, and progress tracking with community chat system, offline mode support, and specialized cloud dashboard.",
+    "A comprehensive Capture The Flag (CTF) platform with user authentication, timed challenges, admin dashboard, and cloud reporting features. The platform allows users to solve progressive levels of security challenges within a time limit. It includes admin capabilities for managing users, challenges, and progress tracking. Additional features include a community chat system, offline mode support, responsive design with dark/light themes, and a specialized cloud dashboard for monitoring system status.",
     tags: [
-      {
-        name: "React.js",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "Node.js",
-        color: "green-text-gradient",
-      },
-      {
-        name: "MongoDB",
-        color: "yellow-text-gradient",
-      },
-      {
-        name: "Tailwind CSS",
-        color: "pink-text-gradient",
-      }
+    {
+    name: "React.js",
+    color: "blue-text-gradient",
+    },
+    {
+    name: "Node.js",
+    color: "green-text-gradient",
+    },
+    {
+    name: "MongoDB",
+    color: "yellow-text-gradient",
+    },
+    {
+    name: "Tailwind CSS",
+    color: "pink-text-gradient",
+    }
     ],
     image: biz,
-    source_code_link: "https://github.com/your-username/ctf-platform",
-    live_demo_link: "https://biztrastech.vercel.app/",
-    completionDate: "2024-09-20",
-    duration: "4 months",
-    teamSize: 3,
-    features: [
-      "Progressive security challenge levels",
-      "Real-time leaderboard and scoring system",
-      "Admin dashboard for challenge management",
-      "Timed challenges with automatic submission",
-      "Community chat system for participants",
-      "Offline mode support for practice",
-      "Cloud monitoring and reporting dashboard",
-      "Dark/light theme with responsive design"
-    ]
+    source_code_link: "https://biztrastech.vercel.app/",
+    },
+    {
+      name: "BladeRunner",
+      description: 
+          "A sophisticated engine analysis platform designed for advanced performance optimization and monitoring. BladeRunner provides a secure authentication system with admin approval workflow, interactive dashboards for real-time engine data visualization, and comprehensive analytics tools. The platform features multiple specialized views including engine variants exploration, performance metrics, and flight speed analysis. Built with a modern tech stack, it includes responsive design, dark/light theme support, and Microsoft authentication integration. The system architecture consists of a React frontend, Node.js backend, and Python-based analytics engine with containerized deployment via Kubernetes.",
+      tags: [
+          {
+              name: "React.js",
+              color: "blue-text-gradient",
+          },
+          {
+              name: "Node.js",
+              color: "green-text-gradient",
+          },
+          {
+              name: "Python",
+              color: "yellow-text-gradient",
+          },
+          {
+              name: "Tailwind CSS",
+              color: "pink-text-gradient",
+          },
+          {
+              name: "Docker",
+              color: "orange-text-gradient",
+          },
+          {
+              name: "Kubernetes",
+              color: "purple-text-gradient",
+          }
+      ],
+      image: blade,
+      source_code_link: "https://bladerunner.greenjets.com/",
   },
   {
-    id: 4,
-    name: "BladeRunner",
-    description: 
-      "A sophisticated engine analysis platform designed for advanced performance optimization and monitoring. BladeRunner provides a secure authentication system with admin approval workflow, interactive dashboards for real-time engine data visualization, and comprehensive analytics tools. Features multiple specialized views including engine variants exploration, performance metrics, and flight speed analysis with containerized deployment.",
-    tags: [
-      {
-        name: "React.js",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "Node.js",
-        color: "green-text-gradient",
-      },
-      {
-        name: "Python",
-        color: "yellow-text-gradient",
-      },
-      {
-        name: "Docker",
-        color: "orange-text-gradient",
-      },
-      {
-        name: "Kubernetes",
-        color: "purple-text-gradient",
-      }
-    ],
-    image: blade,
-    source_code_link: "https://github.com/your-username/bladerunner",
-    live_demo_link: "https://bladerunner.greenjets.com/",
-    completionDate: "2024-11-30",
-    duration: "5 months",
-    teamSize: 4,
-    features: [
-      "Real-time engine performance monitoring",
-      "Interactive data visualization dashboards",
-      "Engine variant exploration and comparison",
-      "Flight speed analysis and optimization",
-      "Microsoft authentication integration",
-      "Python-based analytics engine",
-      "Containerized deployment with Kubernetes",
-      "Admin approval workflow system"
-    ]
-  },
-  {
-    id: 5,
     name: "Ri-MediConsult",
     description:
-      "A comprehensive telemedicine platform built with Next.js and Node.js that connects patients with verified doctors through secure video consultations. Features real-time video calling, credit-based subscription system, doctor verification and profiles, appointment scheduling, medical records storage, flexible payment packages, patient-doctor rating system, and HIPAA-compliant secure data handling.",
+    "A comprehensive telemedicine platform built with Next.js and Node.js that connects patients with verified doctors through secure video consultations. Features include real-time video calling, credit-based subscription system, doctor verification and profiles, appointment scheduling and management, medical records storage, flexible payment packages with non-expiring credits, patient-doctor rating system, multi-device responsive design, and HIPAA-compliant secure data handling for seamless healthcare delivery anytime, anywhere.",
     tags: [
-      {
-        name: "Next.js",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "Node.js",
-        color: "green-text-gradient",
-      },
-      {
-        name: "MongoDB",
-        color: "yellow-text-gradient",
-      },
-      {
-        name: "ShadCN UI",
-        color: "pink-text-gradient",
-      }
+    {
+     name: "Next.js",
+     color: "blue-text-gradient",
+    },
+    {
+     name: "Node.js",
+     color: "green-text-gradient",
+    },
+    {
+     name: "MongoDB",
+     color: "yellow-text-gradient",
+    },
+    {
+     name: "ShadeCn Ui",
+     color: "pink-text-gradient",
+    }
     ],
     image: doc,
-    source_code_link: "https://github.com/your-username/ri-mediconsult",
-    live_demo_link: "https://ri-mediconsult.vercel.app/",
-    completionDate: "2024-08-15",
-    duration: "3.5 months",
-    teamSize: 2,
-    features: [
-      "Secure HD video consultations",
-      "Credit-based subscription system",
-      "Doctor verification and profile system",
-      "Appointment scheduling and management",
-      "Electronic medical records storage",
-      "Multi-device responsive design",
-      "Patient-doctor rating and review system",
-      "HIPAA-compliant data security"
-    ]
+    source_code_link: "https://ri-mediconsult.vercel.app/",
   },
   {
-    id: 6,
     name: "RIFILX Movie Website",
     description:
-      "A modern React application using Vite and Bootstrap that displays curated movie collections with reusable components including Header, Movie, and MovieList. Features external API integration for fetching movie data, responsive design, movie search and filtering capabilities, and an intuitive user interface for browsing favorite movies and discovering new content.",
+      "A React app using Vite and Bootstrap that displays favorite movies with reusable components (Header, Movie, MovieList) and props.Fetches movie data from an external API.",
     tags: [
       {
-        name: "React.js",
+        name: "react",
         color: "blue-text-gradient",
-      },
-      {
-        name: "Vite",
-        color: "green-text-gradient",
       },
       {
         name: "Bootstrap",
-        color: "yellow-text-gradient",
+        color: "green-text-gradient",
       },
       {
-        name: "REST API",
+        name: "css",
         color: "pink-text-gradient",
-      }
+      },
     ],
-    image: weather, // Using weather as placeholder, replace with actual movie project image
-    source_code_link: "https://github.com/your-username/rifilx-movie",
-    live_demo_link: "https://rifilx-movie.vercel.app/",
-    completionDate: "2024-07-10",
-    duration: "1.5 months",
-    teamSize: 1,
-    features: [
-      "External movie API integration",
-      "Responsive component-based architecture",
-      "Advanced search and filtering",
-      "Movie details and trailer integration",
-      "Favorites and watchlist functionality",
-      "Clean and intuitive user interface",
-      "Fast loading with Vite build tool",
-      "Mobile-first responsive design"
-    ]
-  }
+    image: jobit,
+    source_code_link: "https://magical-gaufre-b5f535.netlify.app/",
+  },
+  {
+    name: "Re-Weather",
+    description:
+      "A React app using Vite and Bootstrap that displays current Weather Updates.Fetches Weather data from an external API.",
+    tags: [
+      {
+        name: "JavaScript",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "Bootstrap",
+        color: "green-text-gradient",
+      },
+      {
+        name: "css",
+        color: "pink-text-gradient",
+      },
+    ],
+    image: weather,
+    source_code_link: "https://re-weather-eta.vercel.app/",
+  },
+  
 ];
-
-export default {
-  services,
-  technologies,
-  experiences,
-  testimonials,
-  projects,
-};
