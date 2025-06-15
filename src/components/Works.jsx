@@ -14,41 +14,73 @@ const Works = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Debug: Log projects to see structure
-  console.log('All projects:', projects);
-  console.log('Projects length:', projects?.length);
-
   // Filter out any null/undefined projects
   const validProjects = projects?.filter(p => p != null) || [];
 
-  console.log('Valid projects count:', validProjects.length);
-
-  // Control navbar visibility when modal opens/closes
+  // Control navbar visibility and body scroll when modal opens/closes
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const navbar = document.querySelector('nav[role="navigation"]');
-    if (!navbar) return;
+    const body = document.body;
+    const html = document.documentElement;
 
     if (isModalOpen) {
       // Hide navbar when modal is open
-      navbar.style.transform = 'translateY(-100%)';
-      navbar.style.transition = 'transform 0.3s ease-in-out';
+      if (navbar) {
+        navbar.style.transform = 'translateY(-100%)';
+        navbar.style.transition = 'transform 0.3s ease-in-out';
+        navbar.style.zIndex = '999'; // Lower than modal
+      }
+      
       // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+      body.style.height = '100vh';
+      html.style.overflow = 'hidden';
+      
+      // Add modal-open class to body
+      body.classList.add('modal-open');
+      
+      // Hide other sections behind modal
+      const sections = document.querySelectorAll('section, div[id]');
+      sections.forEach(section => {
+        if (!section.closest('.modal-container')) {
+          section.style.zIndex = '1';
+        }
+      });
+      
     } else {
       // Show navbar when modal is closed
-      navbar.style.transform = 'translateY(0px)';
+      if (navbar) {
+        navbar.style.transform = 'translateY(0px)';
+        navbar.style.zIndex = '1000';
+      }
+      
       // Restore body scroll
-      document.body.style.overflow = 'unset';
+      body.style.overflow = 'unset';
+      body.style.height = 'auto';
+      html.style.overflow = 'unset';
+      
+      // Remove modal-open class
+      body.classList.remove('modal-open');
+      
+      // Restore section z-indexes
+      const sections = document.querySelectorAll('section, div[id]');
+      sections.forEach(section => {
+        section.style.zIndex = '';
+      });
     }
 
     // Cleanup function to ensure navbar is visible and scroll is restored
     return () => {
       if (navbar) {
         navbar.style.transform = 'translateY(0px)';
+        navbar.style.zIndex = '1000';
       }
-      document.body.style.overflow = 'unset';
+      body.style.overflow = 'unset';
+      body.style.height = 'auto';
+      html.style.overflow = 'unset';
+      body.classList.remove('modal-open');
     };
   }, [isModalOpen]);
 
@@ -59,11 +91,14 @@ const Works = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedProject(null);
+    // Add a small delay before clearing the project to allow for exit animation
+    setTimeout(() => {
+      setSelectedProject(null);
+    }, 300);
   };
 
   return (
-    <div ref={ref} className="bg-primary min-h-screen py-20">
+    <div ref={ref} className="bg-primary min-h-screen py-20 relative">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-12">
         <motion.p
@@ -111,21 +146,65 @@ const Works = () => {
         )}
       </motion.div>
 
-      {/* Project Modal */}
-      <ProjectModal
-        project={selectedProject}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      {/* Project Modal with highest z-index */}
+      {(isModalOpen || selectedProject) && (
+        <div className="modal-container">
+          <ProjectModal
+            project={selectedProject}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+          />
+        </div>
+      )}
 
-      {/* Custom Scrollbar Styles */}
+      {/* Global Modal Styles */}
       <style jsx global>{`
+        /* Hide scrollbars for project rows */
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
+        }
+        
+        /* Modal specific styles */
+        .modal-open {
+          overflow: hidden !important;
+          height: 100vh !important;
+        }
+        
+        .modal-open body {
+          overflow: hidden !important;
+          height: 100vh !important;
+        }
+        
+        /* Ensure modal container has highest z-index */
+        .modal-container {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+          z-index: 999999 !important;
+          pointer-events: none;
+        }
+        
+        .modal-container > * {
+          pointer-events: auto;
+        }
+        
+        /* Lower z-index for other content when modal is open */
+        body.modal-open section:not(.modal-container),
+        body.modal-open div[id]:not(.modal-container),
+        body.modal-open nav {
+          z-index: 1 !important;
+        }
+        
+        /* Ensure contact form stays below modal */
+        body.modal-open .contact-section,
+        body.modal-open .contact-form-container {
+          z-index: 1 !important;
         }
       `}</style>
     </div>

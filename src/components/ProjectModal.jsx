@@ -73,15 +73,13 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
     if (!isOpen) return;
 
     document.addEventListener('keydown', handleEscape);
-    document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
     };
   }, [isOpen, handleEscape]);
 
-  // Memoized project data extraction - using constants structure
+  // Memoized project data extraction
   const projectData = useMemo(() => {
     if (!project) return null;
 
@@ -162,19 +160,35 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
 
   return (
     <div 
-      className="fixed inset-0 z-[9999] flex items-start justify-center pt-4 pb-4"
+      className="fixed inset-0 flex items-start justify-center pt-4 pb-4"
+      style={{ 
+        zIndex: 2147483647,  // Maximum z-index value
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        pointerEvents: 'auto'
+      }}
       onClick={handleBackdropClick}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/85" />
+      <div 
+        className="absolute inset-0 bg-black/90" 
+        style={{ zIndex: 2147483646 }}
+      />
       
       {/* Modal Content */}
-      <div className="relative bg-[#0a0a0a] rounded-2xl max-w-6xl w-full mx-4 max-h-[96vh] overflow-hidden border border-gray-800 shadow-2xl">
+      <div 
+        className="relative bg-[#0a0a0a] rounded-2xl max-w-6xl w-full mx-4 max-h-[96vh] overflow-hidden border border-gray-800 shadow-2xl"
+        style={{ zIndex: 2147483647 }}
+      >
         {/* Close Button */}
         <button
           onClick={handleClose}
           className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/70 flex items-center justify-center hover:bg-black/90 transition-colors duration-200 group"
           aria-label="Close modal"
+          style={{ zIndex: 2147483647 }}
         >
           <X size={24} className="text-white group-hover:scale-110 transition-transform duration-200" />
         </button>
