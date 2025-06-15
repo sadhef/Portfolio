@@ -1,154 +1,135 @@
-"use client";
-
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import Image from "next/image";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
+import Image from "next/image";
 
-import { SectionWrapper } from "../hoc";
+import { styles } from "../styles";
 import { technologies } from "../constants";
+import { SectionWrapper } from "../hoc";
+import { textVariant } from "../utils/motion";
 
-// Static TechIcon component for better performance on all devices
-const TechIcon = ({ icon, name, index, isVisible }) => {
-  const iconRef = useRef(null);
-  const [isInView, setIsInView] = useState(false);
-
-  // Use Intersection Observer to only render when visible
-  useEffect(() => {
-    if (typeof window === 'undefined' || !iconRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setIsInView(true);
-            observer.unobserve(entry.target); // Stop observing once the icon is in view
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(iconRef.current);
-    return () => observer.disconnect(); // Cleanup observer when component unmounts
-  }, []);
-
-  // Simplified animation for better performance
-  const animations = {
-    initial: { opacity: 0 },
-    animate: isVisible ? { opacity: 1 } : { opacity: 0 },
-    transition: { duration: 0.3, delay: index * 0.05 }
-  };
-
-  return (
-    <motion.div 
-      ref={iconRef}
-      className="flex flex-col items-center m-3"
-      {...animations}
-    >
-      {isInView ? (
-        <>
-          <div className="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center mb-2">
-            <div className="relative w-12 h-12">
-              <Image 
-                src={icon} 
-                alt={`${name} icon`}
-                fill
-                sizes="(max-width: 768px) 48px, 48px"
-                className="object-contain filter grayscale"
-                priority={index < 18} // Only prioritize first few icons
-              />
-            </div>
-          </div>
-          <p className="text-sm text-white-100 text-center font-light">{name}</p>
-        </>
-      ) : (
-        // Placeholder while loading
-        <div className="w-20 h-20 rounded-full bg-gray-800 animate-pulse"></div>
-      )}
-    </motion.div>
-  );
-};
-
-// Main Tech component with performance optimizations
 const Tech = () => {
-  const controls = useAnimation();
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
+  const controls = useAnimation();
 
-  // Use useState to track the number of visible icons
-  const [visibleCount, setVisibleCount] = useState(6);
-
-  // Use Intersection Observer to trigger animations and progressive loading
+  // Intersection Observer for triggering animations
   useEffect(() => {
-    if (typeof window === 'undefined' || !sectionRef.current) return;
+    if (typeof window === 'undefined') return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
           controls.start("visible");
-
-          // Progressive rendering of icons
-          const loadIcons = () => {
-            setVisibleCount(prev => Math.min(prev + 3, technologies.length)); // More efficient loading
-          };
-
-          loadIcons(); // Load initially
-          // Use requestIdleCallback for smoother and less intrusive loading of additional icons
-          if (window.requestIdleCallback) {
-            requestIdleCallback(loadIcons);
-          } else {
-            setTimeout(loadIcons, 100); // Fallback for browsers that don't support requestIdleCallback
-          }
-
-          return () => observer.disconnect();
         }
       },
-      { root: null, rootMargin: "0px", threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '50px'
+      }
     );
 
-    observer.observe(sectionRef.current);
+    // Store the current ref value to use in cleanup
+    const currentRef = sectionRef.current;
+    
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
 
-    return () => observer.unobserve(sectionRef.current); // Cleanup observer
+    // Proper cleanup with stored ref value
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+      observer.disconnect(); // Always disconnect to be safe
+    };
   }, [controls]);
 
-  // Only render the visible batch of icons
-  const visibleTechnologies = useMemo(() => technologies.slice(0, visibleCount), [visibleCount]);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05, // Reduced stagger for faster appearance
+        delayChildren: 0.1     // Minimal delay
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { 
+      y: 20,           // Reduced movement
+      opacity: 0,
+      scale: 0.9       // Less dramatic scale
+    },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 200,  // Faster spring
+        damping: 15,     // Less bouncy
+        duration: 0.3    // Shorter duration
+      }
+    }
+  };
 
   return (
-    <section ref={sectionRef} className="relative py-10" aria-labelledby="tech-section-title">
-      <h2 id="tech-section-title" className="text-center text-2xl font-bold mb-10">
-        Technologies
-      </h2>
-
+    <div ref={sectionRef} className="flex flex-col items-center">
+      {/* Section Header */}
       <motion.div
+        variants={textVariant()}
         initial="hidden"
         animate={controls}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
-        }}
-        className="flex flex-wrap justify-center gap-5 mt-10"
+        className="text-center mb-10"
       >
-        {visibleTechnologies.map((technology, index) => (
-          <TechIcon
-            key={technology.name}
-            icon={technology.icon}
-            name={technology.name}
-            index={index}
-            isVisible={isVisible}
-          />
-        ))}
+        <p className={`${styles.sectionSubText}`}>Technologies I work with</p>
+        <h2 className={`${styles.sectionHeadText}`}>Skills.</h2>
       </motion.div>
 
-      {/* Loading indicator for remaining technologies */}
-      {visibleCount < technologies.length && isVisible && (
-        <div className="text-center mt-4">
-          <div className="inline-block w-6 h-6 border-t-2 border-white rounded-full animate-spin"></div>
-        </div>
-      )}
-    </section>
+      {/* Technology Icons Grid */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate={controls}
+        className="flex flex-row flex-wrap justify-center gap-10 max-w-5xl"
+      >
+        {technologies.map((technology, index) => (
+          <motion.div
+            key={technology.name}
+            variants={itemVariants}
+            className="w-28 h-28 flex flex-col items-center justify-center group"
+            whileHover={{ 
+              scale: 1.1,
+              y: -10,
+              transition: { duration: 0.3 }
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {/* Technology Icon Container */}
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700 flex items-center justify-center mb-2 group-hover:border-blue-500 transition-all duration-300 shadow-lg group-hover:shadow-blue-500/25">
+              <div className="relative w-12 h-12">
+                <Image
+                  src={technology.icon}
+                  alt={technology.name}
+                  fill
+                  sizes="48px"
+                  className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+            
+            {/* Technology Name */}
+            <span className="text-white text-sm font-medium text-center group-hover:text-blue-400 transition-colors duration-300">
+              {technology.name}
+            </span>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
   );
 };
 
-export default SectionWrapper(Tech, "");
+export default SectionWrapper(Tech, "tech");

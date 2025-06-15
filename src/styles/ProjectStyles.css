@@ -1,0 +1,205 @@
+/* Custom scrollbar hiding for project rows */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth transitions for project cards */
+.project-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card:hover {
+  z-index: 10;
+  transform: scale(1.05);
+}
+
+/* Custom gradient backgrounds for tags */
+.blue-text-gradient {
+  background: linear-gradient(90deg, #3B82F6, #1D4ED8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.green-text-gradient {
+  background: linear-gradient(90deg, #10B981, #047857);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pink-text-gradient {
+  background: linear-gradient(90deg, #EC4899, #BE185D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.yellow-text-gradient {
+  background: linear-gradient(90deg, #F59E0B, #D97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.orange-text-gradient {
+  background: linear-gradient(90deg, #F97316, #EA580C);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.purple-text-gradient {
+  background: linear-gradient(90deg, #8B5CF6, #7C3AED);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Modal backdrop blur effect */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Hover effects for project rows */
+.project-row-group:hover .scroll-arrow {
+  opacity: 1;
+}
+
+.scroll-arrow {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Animation for project card expansion */
+@keyframes cardExpand {
+  from {
+    width: 200px;
+  }
+  to {
+    width: 320px;
+  }
+}
+
+@keyframes cardShrink {
+  from {
+    width: 320px;
+  }
+  to {
+    width: 200px;
+  }
+}
+
+.card-expand {
+  animation: cardExpand 0.3s ease forwards;
+}
+
+.card-shrink {
+  animation: cardShrink 0.3s ease forwards;
+}
+
+/* Smooth scroll behavior */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Custom focus styles for accessibility */
+.project-card:focus,
+.scroll-arrow:focus {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* Loading animation for project images */
+.project-image {
+  background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Enhanced button hover effects */
+.action-button {
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  transform: scale(1.1);
+}
+
+.action-button:active {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .project-card {
+    width: 180px !important;
+  }
+  
+  .project-card:hover {
+    width: 280px !important;
+    transform: scale(1.02);
+  }
+}
+
+@media (max-width: 480px) {
+  .project-card {
+    width: 160px !important;
+  }
+  
+  .project-card:hover {
+    width: 240px !important;
+    transform: scale(1.01);
+  }
+}
+
+/* Dark theme optimizations */
+.dark-theme {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #181818;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --border-color: #333333;
+}
+
+/* Performance optimizations */
+.project-row {
+  contain: layout style;
+  will-change: scroll-position;
+}
+
+.project-card-image {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Custom loading states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #1a1a1a 25%, #2d2d2d 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

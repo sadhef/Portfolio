@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, useDragControls, PanInfo } from "framer-motion";
 
 // Throttle function
 const throttle = (func, limit) => {
@@ -43,36 +43,116 @@ const calculateMovement = (mouseX, mouseY, index, isClient) => {
   };
 };
 
-const AnimatedCharacter = ({ character, index, mouseX, mouseY, isClient }) => {
+// Enhanced Draggable Character Component - Always Draggable
+const DraggableCharacter = ({ 
+  character, 
+  index, 
+  mouseX, 
+  mouseY, 
+  isClient, 
+  onDragStart, 
+  onDragEnd 
+}) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [hasMoved, setHasMoved] = useState(false);
+  
   const movement = calculateMovement(mouseX, mouseY, index, isClient);
   const delay = index * 0.05;
 
+  const handleDragStart = () => {
+    setIsDragging(true);
+    onDragStart?.(index);
+  };
+
+  const handleDragEnd = (event, info) => {
+    setIsDragging(false);
+    onDragEnd?.(index);
+    
+    // Only update position if there was significant movement
+    if (Math.abs(info.offset.x) > 5 || Math.abs(info.offset.y) > 5) {
+      setHasMoved(true);
+      setPosition({
+        x: position.x + info.offset.x,
+        y: position.y + info.offset.y
+      });
+    }
+  };
+
+  // Safe drag constraints that work during SSR
+  const getDragConstraints = () => {
+    if (typeof window === 'undefined') {
+      return {
+        left: -960,
+        right: 960,
+        top: -540,
+        bottom: 540,
+      };
+    }
+    return {
+      left: -window.innerWidth / 2,
+      right: window.innerWidth / 2,
+      top: -window.innerHeight / 2,
+      bottom: window.innerHeight / 2,
+    };
+  };
+
   return (
     <motion.span
-      className="relative inline-block text-white"
+      className={`relative inline-block text-white select-none cursor-grab active:cursor-grabbing ${
+        isDragging ? 'z-50' : 'z-10'
+      }`}
       initial={{ opacity: 0, y: 50 }}
       animate={{
         opacity: 1,
-        y: 0,
-        x: movement.x,
-        y: movement.y,
-        rotateY: movement.rotateY,
-        rotateX: movement.rotateX,
+        y: hasMoved ? position.y : (isDragging ? 0 : movement.y),
+        x: hasMoved ? position.x : (isDragging ? 0 : movement.x),
+        rotateY: isDragging || hasMoved ? 0 : movement.rotateY,
+        rotateX: isDragging || hasMoved ? 0 : movement.rotateX,
+        scale: isDragging ? 1.1 : 1,
       }}
       transition={{
-        delay,
-        duration: 0.5,
+        delay: hasMoved ? 0 : delay,
+        duration: isDragging ? 0 : 0.5,
         ease: "easeOut",
-        x: { duration: 0.1, ease: "linear" },
-        y: { duration: 0.1, ease: "linear" },
+        x: { duration: isDragging ? 0 : 0.1, ease: "linear" },
+        y: { duration: isDragging ? 0 : 0.1, ease: "linear" },
+        scale: { duration: 0.2 }
       }}
       style={{
-        textShadow: movement.textShadow,
+        textShadow: isDragging ? '0 10px 20px rgba(0,0,0,0.5)' : (hasMoved ? '0 5px 10px rgba(0,0,0,0.3)' : movement.textShadow),
         transformStyle: "preserve-3d",
         transformOrigin: "center center",
       }}
+      drag={isClient ? true : false}
+      dragConstraints={getDragConstraints()}
+      dragElastic={0.1}
+      dragMomentum={false}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      whileHover={{ scale: 1.05 }}
     >
       {character}
+      
+      {/* Subtle hover indicator - only on client */}
+      {isClient && (
+        <motion.div
+          className="absolute -inset-1 border border-white/10 rounded opacity-0 hover:opacity-100"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        />
+      )}
+      
+      {/* Enhanced shadow when dragging */}
+      {isDragging && (
+        <motion.div
+          className="absolute inset-0 bg-white/10 rounded blur-sm -z-10"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1.2 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+        />
+      )}
     </motion.span>
   );
 };
@@ -88,11 +168,14 @@ const FloatingDots = ({ count = 25, isClient }) => {
     }))
   ).current;
 
+  // Don't render during SSR
+  if (!isClient) return null;
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {randomPositions.map((position, i) => {
-        const width = isClient ? window.innerWidth : 1000;
-        const height = isClient ? window.innerHeight : 800;
+        const width = typeof window !== 'undefined' ? window.innerWidth : 1000;
+        const height = typeof window !== 'undefined' ? window.innerHeight : 800;
 
         return (
           <motion.div
@@ -115,16 +198,19 @@ const FloatingDots = ({ count = 25, isClient }) => {
   );
 };
 
+// Removed - No reset button needed
+
 const Hero = () => {
   const [isClient, setIsClient] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [draggedLetters, setDraggedLetters] = useState(new Set());
 
   const heroRef = useRef(null);
   const firstName = "Mohammed";
   const lastName = "Sadhef";
 
-  const roles = ["Full Stack Developer", "Cloud Engineer", "Python Developer"];
+  const roles = ["Full Stack Developer", "Cloud /DevOps Engineer", "Python Developer"];
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
@@ -174,6 +260,14 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, [displayedText, isDeleting, roleIndex]);
 
+  const handleDragStart = (index) => {
+    setDraggedLetters(prev => new Set([...prev, index]));
+  };
+
+  const handleDragEnd = (index) => {
+    // Letter stays in dragged position
+  };
+
   return (
     <section
       ref={heroRef}
@@ -192,15 +286,27 @@ const Hero = () => {
         >
           <div className="flex items-center justify-center mb-4">
             <div className="h-px w-8 bg-white mr-3 opacity-60" />
-            <span className="text-white text-sm tracking-widest uppercase font-light">Welcome to my portfolio</span>
+            <span className="text-white text-sm tracking-widest uppercase font-light">
+              Welcome to my portfolio
+            </span>
             <div className="h-px w-8 bg-white ml-3 opacity-60" />
           </div>
         </motion.div>
 
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 tracking-tight leading-none">
+        {/* Always draggable name */}
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2 tracking-tight leading-none relative">
           <div className="inline-block">
             {firstName.split("").map((char, index) => (
-              <AnimatedCharacter key={`first-${index}`} character={char} index={index} mouseX={mousePosition.x} mouseY={mousePosition.y} isClient={isClient} />
+              <DraggableCharacter
+                key={`first-${index}`}
+                character={char}
+                index={index}
+                mouseX={mousePosition.x}
+                mouseY={mousePosition.y}
+                isClient={isClient}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              />
             ))}
           </div>
           <span className="sm:hidden">
@@ -209,13 +315,15 @@ const Hero = () => {
           <span className="hidden sm:inline">&nbsp;</span>
           <div className="inline-block">
             {lastName.split("").map((char, index) => (
-              <AnimatedCharacter
+              <DraggableCharacter
                 key={`last-${index}`}
                 character={char}
                 index={index + firstName.length}
                 mouseX={mousePosition.x}
                 mouseY={mousePosition.y}
                 isClient={isClient}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
               />
             ))}
           </div>

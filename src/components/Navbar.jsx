@@ -7,6 +7,24 @@ import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { styles } from "../styles";
 import { navLinks } from "../constants";
 
+// Loading indicator component for scroll effect - SPINNER ONLY
+const ScrollLoadingIndicator = memo(({ isLoading }) => {
+  if (!isLoading) return null;
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      className="absolute right-4 top-1/2 transform -translate-y-1/2"
+    >
+      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+    </motion.div>
+  );
+});
+
+ScrollLoadingIndicator.displayName = "ScrollLoadingIndicator";
+
 // Scroll Progress Component
 const ScrollProgress = memo(({ className = "" }) => {
   const { scrollYProgress } = useScroll();
@@ -30,7 +48,15 @@ ScrollProgress.displayName = "ScrollProgress";
 const NavItem = memo(({ nav, active, setActive, index }) => {
   const itemVariants = {
     hidden: { opacity: 0, y: -10 },
-    show: { opacity: 1, y: 0, transition: { delay: 0.1 * index, duration: 0.5, ease: "easeOut" } },
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        delay: 0.1 * index, 
+        duration: 0.5, 
+        ease: "easeOut" 
+      } 
+    },
   };
 
   return (
@@ -38,7 +64,9 @@ const NavItem = memo(({ nav, active, setActive, index }) => {
       key={nav.id}
       custom={index}
       variants={itemVariants}
-      className={`${active === nav.title ? "text-white" : "text-secondary"} hover:text-white text-[18px] font-light cursor-pointer transition-colors duration-300`}
+      className={`${
+        active === nav.title ? "text-white" : "text-secondary"
+      } hover:text-white text-[18px] font-light cursor-pointer transition-colors duration-300`}
       onClick={() => setActive(nav.title)}
       tabIndex={0}
       onKeyDown={(e) => {
@@ -73,25 +101,55 @@ const Navbar = () => {
   const [active, setActive] = useState("");
   const [toggle, setToggle] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
 
-  // Simplified scroll handler - ONLY for background effect
+  // SIMPLE scroll handler - ONLY changes background, NEVER hides navbar
   const handleScroll = useCallback(() => {
     if (typeof window === "undefined") return;
+    
     const currentScrollPos = window.scrollY;
+    
+    // Show loading indicator when scrolling
+    setIsScrolling(true);
+    
+    // ONLY handle navbar background transition - NO HIDING
     setScrolled(currentScrollPos > 100);
+    
+    // Clear loading indicator after scroll stops
+    clearTimeout(window.scrollTimeout);
+    window.scrollTimeout = setTimeout(() => {
+      setIsScrolling(false);
+    }, 150);
+    
   }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    // Set initial state based on URL hash if present
     const hash = window.location.hash;
     if (hash) {
       const item = navLinks.find((nav) => `#${nav.id}` === hash);
       if (item) setActive(item.title);
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Add scroll event listener with throttling for better performance
+    let ticking = false;
+    const optimizedScrollHandler = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", optimizedScrollHandler, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", optimizedScrollHandler);
+      clearTimeout(window.scrollTimeout);
+    };
   }, [handleScroll]);
 
   // Close mobile menu when clicking outside
@@ -110,11 +168,18 @@ const Navbar = () => {
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className={`${styles.paddingX} w-full flex items-center py-5 fixed top-0 z-20 transition-all duration-300 relative ${
+      className={`${styles.paddingX} w-full flex items-center py-5 fixed top-0 z-20 transition-all duration-300 ${
         scrolled 
           ? "bg-black/80 backdrop-blur-md shadow-lg border-b border-white/10" 
           : "bg-transparent"
       }`}
+      style={{ 
+        transform: 'translateY(0px)', // FORCE NAVBAR TO ALWAYS BE VISIBLE
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        right: '0'
+      }}
     >
       <div className="w-full flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo */}
@@ -197,24 +262,26 @@ const Navbar = () => {
             />
           </motion.button>
 
+          {/* Mobile Menu */}
           <AnimatePresence>
             {toggle && (
               <motion.div
                 id="mobile-menu"
-                initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                initial={{ opacity: 0, scale: 0.95, y: -20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                exit={{ opacity: 0, scale: 0.95, y: -20 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                className="p-6 bg-black/90 backdrop-blur-xl absolute top-20 right-0 mx-4 my-2 min-w-[180px] z-40 rounded-xl border border-white/20 shadow-2xl"
-                role="menu"
+                className="absolute top-16 right-0 mx-4 my-2 min-w-[200px] z-40 bg-black/90 backdrop-blur-lg rounded-xl border border-white/10 shadow-2xl overflow-hidden"
               >
                 <motion.ul 
-                  className="list-none flex flex-col gap-4"
+                  role="menu" 
+                  className="flex flex-col"
                   initial="closed"
                   animate="open"
+                  exit="closed"
                   variants={{
                     open: {
-                      transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+                      transition: { staggerChildren: 0.07, delayChildren: 0.1 }
                     },
                     closed: {
                       transition: { staggerChildren: 0.05, staggerDirection: -1 }
@@ -225,8 +292,7 @@ const Navbar = () => {
                     <motion.li
                       key={nav.id}
                       role="menuitem"
-                      tabIndex={0}
-                      className={`font-poppins font-light cursor-pointer text-[16px] hover:text-blue-400 transition-colors duration-300 ${
+                      className={`font-poppins font-light cursor-pointer text-[16px] transition-colors duration-300 ${
                         active === nav.title ? "text-white" : "text-gray-300"
                       }`}
                       onClick={() => {
@@ -260,7 +326,7 @@ const Navbar = () => {
                       whileHover={{ x: 5, transition: { duration: 0.2 } }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <a href={`#${nav.id}`} className="block py-2 px-3 rounded-lg hover:bg-white/10 transition-colors duration-300">
+                      <a href={`#${nav.id}`} className="block py-3 px-6 hover:bg-white/10 transition-colors duration-300">
                         {nav.title}
                       </a>
                     </motion.li>
@@ -270,9 +336,14 @@ const Navbar = () => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Loading Indicator */}
+        <AnimatePresence>
+          <ScrollLoadingIndicator isLoading={isScrolling} />
+        </AnimatePresence>
       </div>
       
-      {/* 🎯 SCROLL PROGRESS BAR */}
+      {/* Scroll Progress Bar */}
       <ScrollProgress />
     </nav>
   );
