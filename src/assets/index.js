@@ -36,6 +36,10 @@ import blade from "./blade.webp";
 import cook from "./cook.webp";
 import doc from "./doc.webp";
 import game from "./game.webp";
+import retodo1 from "./retodo1.webp";
+import retodo2 from "./retodo2.webp";
+import retodo3 from "./retodo3.webp";
+import retodo from "./retodo.webp";
 
 export {
   backend,
@@ -72,5 +76,9 @@ export {
   doc,
   game,
   blade,
+  retodo1,
+  retodo2,
+  retodo3,
+  retodo,
   cook,
 };
