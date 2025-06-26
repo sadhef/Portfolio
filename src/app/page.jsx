@@ -19,6 +19,11 @@ const StarsCanvas = dynamic(() => import("../components/canvas/Stars"), {
   ssr: false 
 });
 
+// Import the backdoor easter egg component
+const BackdoorEasterEgg = dynamic(() => import("../components/BackdoorEasterEgg"), { 
+  ssr: false 
+});
+
 // Simple placeholder loading component
 const SectionPlaceholder = () => (
   <div className="w-full h-screen flex items-center justify-center">
@@ -58,6 +63,9 @@ export default function Home() {
 
       {/* Always render 3D stars without any conditions */}
       <StarsCanvas />
+      
+      {/* Add the backdoor easter egg system */}
+      <BackdoorEasterEgg />
     </main>
   );
 }

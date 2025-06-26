@@ -52,8 +52,6 @@ export const navLinks = [
   },
 ];
 
-
-
 export const technologies = [
   {
     name: "HTML 5",
@@ -117,7 +115,8 @@ export const experiences = [
   },
 ];
 
-export const projects = [
+// Web Applications
+export const webApplications = [
   {
     name: "RiField Turf Booking",
     description:
@@ -138,6 +137,7 @@ export const projects = [
     ],
     image: turf,
     source_code_link: "https://rifield-web-appuser-65d9.vercel.app",
+    type: "web"
   },
   {
     name: "COokiFy",
@@ -163,6 +163,7 @@ export const projects = [
     ],
     image: cook,
     source_code_link: "https://cookifyy.vercel.app/",
+    type: "web"
   },
   {
     name: "CTF Platform",
@@ -188,6 +189,7 @@ export const projects = [
     ],
     image: biz,
     source_code_link: "https://biztrastech.vercel.app/",
+    type: "web"
     },
     {
       name: "BladeRunner",
@@ -221,6 +223,7 @@ export const projects = [
       ],
       image: blade,
       source_code_link: "https://bladerunner.greenjets.com/",
+      type: "web"
   },
   {
     name: "Ri-MediConsult",
@@ -246,6 +249,7 @@ export const projects = [
     ],
     image: doc,
     source_code_link: "https://ri-mediconsult.vercel.app/",
+    type: "web"
   },
   {
     name: "Ri-Puzzlet",
@@ -267,48 +271,52 @@ export const projects = [
     ],
     image: game,
     source_code_link: "https://ri-puzzle.vercel.app/",
-  },
-  {
-    name: "RIFILX Movie Website",
-    description:
-      "A React app using Vite and Bootstrap that displays favorite movies with reusable components (Header, Movie, MovieList) and props.Fetches movie data from an external API.",
-    tags: [
-      {
-        name: "react",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "Bootstrap",
-        color: "green-text-gradient",
-      },
-      {
-        name: "css",
-        color: "pink-text-gradient",
-      },
-    ],
-    image: jobit,
-    source_code_link: "https://magical-gaufre-b5f535.netlify.app/",
-  },
-  {
-    name: "Re-Weather",
-    description:
-      "A React app using Vite and Bootstrap that displays current Weather Updates.Fetches Weather data from an external API.",
-    tags: [
-      {
-        name: "JavaScript",
-        color: "blue-text-gradient",
-      },
-      {
-        name: "Bootstrap",
-        color: "green-text-gradient",
-      },
-      {
-        name: "css",
-        color: "pink-text-gradient",
-      },
-    ],
-    image: weather,
-    source_code_link: "https://re-weather-eta.vercel.app/",
-  },
-  
+    type: "web"
+  }
 ];
+
+// Mobile Apps
+export const mobileApps = [
+  {
+    name: "Retodo",
+    description:
+      "An AI-powered todo application featuring voice notes, intelligent task suggestions, and a conversational chatbot assistant named 'Cookie.' Built with Flutter, it offers smart notifications, priority-based organization, and productivity analytics. The app includes voice-to-task conversion, real-time synchronization, and adaptive themes for seamless cross-platform task management and enhanced productivity workflows.",
+    tags: [
+      {
+        name: "Flutter",
+        color: "blue-text-gradient",
+      },
+      {
+        name: "AI Assistant",
+        color: "green-text-gradient",
+      },
+      {
+        name: "Voice Recognition",
+        color: "pink-text-gradient",
+      },
+      {
+        name: "Cross-platform",
+        color: "orange-text-gradient",
+      },
+    ],
+    image: retodo,
+    screenshots: [retodo1, retodo2, retodo3],
+    apk_download_link: "https://drive.google.com/file/d/1BJ1Mw8fONdaKq8y6wfNEW7hMYha9mUIH/view?usp=drive_link",
+    features: [
+      "AI-powered task suggestions",
+      "Voice-to-task conversion",
+      "Conversational chatbot assistant 'Cookie'",
+      "Smart notifications and reminders",
+      "Priority-based task organization",
+      "Productivity analytics and insights",
+      "Real-time synchronization",
+      "Adaptive light/dark themes",
+      "Cross-platform compatibility",
+      "Offline mode support"
+    ],
+    type: "mobile"
+  },
+];
+
+export const projects = webApplications;
+export const allProjects = [...webApplications, ...mobileApps];

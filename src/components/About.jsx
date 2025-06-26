@@ -22,8 +22,8 @@ const services = [
   },
   {
     title: "Mobile Development",
-    description: "Cross-platform mobile applications with React Native and seamless user experiences.",
-    technologies: ["React Native", "Expo", "Android"]
+    description: "Cross-platform mobile applications with Flutter and seamless user experiences.",
+    technologies: ["Flutter", "Ios", "Android"]
   },
   {
     title: "AI & Machine Learning",
@@ -40,7 +40,7 @@ const skills = [
   { name: "Python", level: 85 },
   { name: "MongoDB", level: 90 },
   { name: "PostgreSQL", level: 82 },
-  { name: "React Native", level: 80 },
+  { name: "Flutter", level: 50 },
   { name: "Docker", level: 75 }
 ];
 

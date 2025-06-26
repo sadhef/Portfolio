@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { styles } from '../styles';
 import { SectionWrapper } from '../hoc';
-import { projects } from '../constants';
+import { webApplications, mobileApps } from '../constants';
 import ProjectRow from './ProjectRow';
 import ProjectModal from './ProjectModal';
 
@@ -15,7 +15,8 @@ const Works = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Filter out any null/undefined projects
-  const validProjects = projects?.filter(p => p != null) || [];
+  const validWebApps = webApplications?.filter(p => p != null) || [];
+  const validMobileApps = mobileApps?.filter(p => p != null) || [];
 
   // Control navbar visibility and body scroll when modal opens/closes
   useEffect(() => {
@@ -124,23 +125,39 @@ const Works = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-3 text-secondary text-[17px] max-w-3xl leading-[30px] mx-auto text-center px-4 sm:px-0"
         >
-          Following projects showcase my skills and experience through
-          real-world examples of my work. Each project is briefly described with
-          links to code repositories and live demos. Hover over cards to see detailed information
-          and click to explore the full project breakdown.
+          Showcasing my expertise in full-stack development through web applications and mobile apps.
+          Each project demonstrates different aspects of modern development including MERN stack, 
+          AI integration, and cross-platform mobile development. Click on any project to explore 
+          detailed features, technologies used, and live demonstrations.
         </motion.p>
       </div>
 
-      {/* Single Project Row - All Projects */}
+      {/* Web Applications Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
         transition={{ duration: 0.5, delay: 0.6 }}
       >
-        {validProjects.length > 0 && (
+        {validWebApps.length > 0 && (
           <ProjectRow
-            title="All Projects"
-            projects={validProjects}
+            title="Web Applications"
+            projects={validWebApps}
+            onSelectProject={handleSelectProject}
+          />
+        )}
+      </motion.div>
+
+      {/* Mobile Apps Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="mt-8"
+      >
+        {validMobileApps.length > 0 && (
+          <ProjectRow
+            title="Mobile Apps"
+            projects={validMobileApps}
             onSelectProject={handleSelectProject}
           />
         )}
@@ -205,6 +222,63 @@ const Works = () => {
         body.modal-open .contact-section,
         body.modal-open .contact-form-container {
           z-index: 1 !important;
+        }
+
+        /* Web Applications Section Styling */
+        .web-apps-section {
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+          border-radius: 20px;
+          padding: 20px 0;
+          margin: 20px 0;
+        }
+
+        /* Mobile Apps Section Styling */
+        .mobile-apps-section {
+          background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(168, 85, 247, 0.05) 100%);
+          border-radius: 20px;
+          padding: 20px 0;
+          margin: 20px 0;
+        }
+
+        /* Project category badges */
+        .project-category-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+
+        .web-app-badge {
+          background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+          color: white;
+        }
+
+        .mobile-app-badge {
+          background: linear-gradient(135deg, #10B981, #8B5CF6);
+          color: white;
+        }
+
+        /* Enhanced hover effects for project sections */
+        .project-section:hover .project-category-badge {
+          transform: scale(1.05);
+          transition: transform 0.3s ease;
+        }
+
+        /* Responsive design improvements */
+        @media (max-width: 768px) {
+          .project-section {
+            margin: 16px 0;
+            padding: 16px 0;
+          }
+          
+          .project-category-badge {
+            font-size: 12px;
+            padding: 6px 12px;
+          }
         }
       `}</style>
     </div>

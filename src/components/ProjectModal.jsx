@@ -1,6 +1,6 @@
-import React, { useEffect, useCallback, useMemo, memo } from 'react';
+import React, { useEffect, useCallback, useMemo, memo, useState } from 'react';
 import Image from "next/image";
-import { X, Github, ExternalLink, Calendar, Code } from 'lucide-react';
+import { X, Github, ExternalLink, Calendar, Code, Download, Smartphone, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Memoized action button component
 const ActionButton = memo(({ onClick, className, children, icon: Icon }) => (
@@ -48,6 +48,86 @@ const TechTag = memo(({ tag, index }) => {
 });
 TechTag.displayName = 'TechTag';
 
+// Screenshot carousel component for mobile apps
+const ScreenshotCarousel = memo(({ screenshots, appName }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  
+  const nextSlide = useCallback(() => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === screenshots.length - 1 ? 0 : prevIndex + 1
+    );
+  }, [screenshots.length]);
+  
+  const prevSlide = useCallback(() => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? screenshots.length - 1 : prevIndex - 1
+    );
+  }, [screenshots.length]);
+
+  if (!screenshots || screenshots.length === 0) return null;
+
+  return (
+    <div className="relative bg-gray-900/70 rounded-2xl p-8 border border-gray-800">
+      <h4 className="text-white font-bold text-2xl mb-6 flex items-center gap-3">
+        <Smartphone size={24} />
+        App Screenshots
+      </h4>
+      
+      <div className="relative">
+        {/* Main screenshot display */}
+        <div className="relative w-full h-96 bg-gray-800 rounded-xl overflow-hidden">
+          <Image
+            src={screenshots[currentIndex]}
+            alt={`${appName} screenshot ${currentIndex + 1}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-contain"
+            priority={currentIndex === 0}
+          />
+        </div>
+        
+        {/* Navigation arrows */}
+        {screenshots.length > 1 && (
+          <>
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors"
+              aria-label="Previous screenshot"
+            >
+              <ChevronLeft size={24} className="text-white" />
+            </button>
+            
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors"
+              aria-label="Next screenshot"
+            >
+              <ChevronRight size={24} className="text-white" />
+            </button>
+          </>
+        )}
+        
+        {/* Dot indicators */}
+        {screenshots.length > 1 && (
+          <div className="flex justify-center gap-2 mt-4">
+            {screenshots.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-3 h-3 rounded-full transition-colors ${
+                  index === currentIndex ? 'bg-white' : 'bg-gray-600'
+                }`}
+                aria-label={`Go to screenshot ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+ScreenshotCarousel.displayName = 'ScreenshotCarousel';
+
 const ProjectModal = memo(({ project, onClose, isOpen }) => {
   // Memoized close handler
   const handleClose = useCallback(() => {
@@ -88,17 +168,26 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
       description = 'No description available',
       image,
       tags = [],
-      source_code_link
+      source_code_link,
+      screenshots = [],
+      apk_download_link,
+      features = [],
+      type = 'web'
     } = project;
 
     const year = new Date().getFullYear();
 
-    return { name, description, image, tags, source_code_link, year };
+    return { name, description, image, tags, source_code_link, screenshots, apk_download_link, features, type, year };
   }, [project]);
 
   // Memoized features extraction
-  const features = useMemo(() => {
-    if (!projectData?.description) return [];
+  const displayFeatures = useMemo(() => {
+    if (!projectData) return [];
+
+    // Use provided features if available, otherwise extract from description
+    if (projectData.features && projectData.features.length > 0) {
+      return projectData.features;
+    }
 
     const desc = projectData.description;
     
@@ -116,27 +205,19 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
       'API': 'External API integration',
       'booking': 'Real-time booking management',
       'payments': 'Payment processing',
-      'Razorpay': 'Razorpay payment integration',
-      'Redux': 'State management with Redux',
-      'multilingual': 'Multilingual support',
-      'voice-controlled': 'Voice-controlled instructions',
-      'admin': 'Admin dashboard',
-      'timed challenges': 'Timed challenge system',
-      'community chat': 'Community chat system',
-      'offline mode': 'Offline mode support',
-      'cloud dashboard': 'Cloud monitoring dashboard',
-      'video': 'Video consultation system',
-      'telemedicine': 'Telemedicine platform',
-      'HIPAA': 'HIPAA-compliant security',
-      'Docker': 'Containerized deployment',
-      'Kubernetes': 'Kubernetes orchestration',
-      'MongoDB': 'Database management',
-      'Vite': 'Fast build tool',
-      'Bootstrap': 'Responsive UI framework'
+      'voice': 'Voice recognition and commands',
+      'AI': 'AI-powered features',
+      'chatbot': 'Intelligent chatbot assistant',
+      'notifications': 'Smart notifications',
+      'analytics': 'Productivity analytics',
+      'synchronization': 'Real-time synchronization',
+      'themes': 'Adaptive themes',
+      'cross-platform': 'Cross-platform compatibility',
+      'offline': 'Offline mode support'
     };
 
     Object.entries(featureMap).forEach(([key, value]) => {
-      if (desc.includes(key) && !detectedFeatures.includes(value)) {
+      if (desc.toLowerCase().includes(key.toLowerCase()) && !detectedFeatures.includes(value)) {
         detectedFeatures.push(value);
       }
     });
@@ -144,7 +225,7 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
     return detectedFeatures.length > 0 
       ? detectedFeatures 
       : ['Modern user interface', 'Cross-platform compatibility', 'Optimized performance'];
-  }, [projectData?.description]);
+  }, [projectData]);
 
   // Memoized button handlers
   const handleDemoClick = useCallback(() => {
@@ -153,16 +234,26 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
     }
   }, [projectData?.source_code_link]);
 
+  const handleApkDownload = useCallback(() => {
+    if (projectData?.apk_download_link && projectData.apk_download_link !== '#') {
+      window.open(projectData.apk_download_link, '_blank');
+    } else {
+      // Placeholder for APK download
+      alert('APK download will be available soon!');
+    }
+  }, [projectData?.apk_download_link]);
+
   // Early return for better performance
   if (!isOpen || !projectData) return null;
 
-  const { name, description, image, tags, source_code_link, year } = projectData;
+  const { name, description, image, tags, source_code_link, screenshots, apk_download_link, type, year } = projectData;
+  const isMobileApp = type === 'mobile';
 
   return (
     <div 
       className="fixed inset-0 flex items-start justify-center pt-4 pb-4"
       style={{ 
-        zIndex: 2147483647,  // Maximum z-index value
+        zIndex: 2147483647,
         position: 'fixed',
         top: 0,
         left: 0,
@@ -212,13 +303,30 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
             
             {/* Title and Actions Overlay */}
             <div className="absolute bottom-0 left-0 right-0 p-8">
-              <h1 className="text-white text-4xl md:text-6xl font-bold mb-6 max-w-4xl leading-tight will-change-transform">
-                {name}
-              </h1>
+              <div className="flex items-center gap-4 mb-4">
+                <h1 className="text-white text-4xl md:text-6xl font-bold leading-tight will-change-transform">
+                  {name}
+                </h1>
+                {isMobileApp && (
+                  <span className="bg-blue-500/20 text-blue-300 px-4 py-2 rounded-full border border-blue-500/30 text-lg font-semibold">
+                    Mobile App
+                  </span>
+                )}
+              </div>
               
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-4">
-                {source_code_link && (
+                {isMobileApp && apk_download_link && (
+                  <ActionButton
+                    onClick={handleApkDownload}
+                    className="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl transition-colors duration-200 font-bold text-lg shadow-lg"
+                    icon={Download}
+                  >
+                    Download APK
+                  </ActionButton>
+                )}
+                
+                {source_code_link && !isMobileApp && (
                   <ActionButton
                     onClick={handleDemoClick}
                     className="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors duration-200 font-bold text-lg shadow-lg"
@@ -243,6 +351,12 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
                 <Code size={22} />
                 <span className="font-medium">{tags.length || 0} Technologies</span>
               </div>
+              {isMobileApp && (
+                <div className="flex items-center gap-3">
+                  <Smartphone size={22} />
+                  <span className="font-medium">Cross-platform</span>
+                </div>
+              )}
             </div>
 
             <div className="grid lg:grid-cols-3 gap-12">
@@ -251,17 +365,17 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
                 {/* Description */}
                 <div>
                   <h3 className="text-white text-3xl font-bold mb-6">
-                    About This Project
+                    About This {isMobileApp ? 'App' : 'Project'}
                   </h3>
                   <p className="text-gray-300 text-xl leading-relaxed">{description}</p>
                 </div>
 
                 {/* Features */}
-                {features.length > 0 && (
+                {displayFeatures.length > 0 && (
                   <div>
                     <h3 className="text-white text-3xl font-bold mb-6">Key Features</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      {features.map((feature, index) => (
+                      {displayFeatures.map((feature, index) => (
                         <FeatureItem key={index} feature={feature} index={index} />
                       ))}
                     </div>
@@ -281,11 +395,26 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
 
               {/* Sidebar */}
               <div className="space-y-8">
+                {/* Screenshots for mobile apps */}
+                {isMobileApp && screenshots && screenshots.length > 0 && (
+                  <ScreenshotCarousel screenshots={screenshots} appName={name} />
+                )}
+
                 {/* Quick Links */}
                 <div className="bg-gray-900/70 rounded-2xl p-8 border border-gray-800">
-                  <h4 className="text-white font-bold text-2xl mb-6">Quick Links</h4>
+                  <h4 className="text-white font-bold text-2xl mb-6">Quick Actions</h4>
                   <div className="space-y-4">
-                    {source_code_link && (
+                    {isMobileApp && apk_download_link && (
+                      <button
+                        onClick={handleApkDownload}
+                        className="flex items-center gap-4 text-gray-300 hover:text-white transition-all duration-200 text-xl p-4 rounded-xl hover:bg-gray-800/50 group w-full"
+                      >
+                        <Download size={24} className="group-hover:scale-110 transition-transform" />
+                        Download APK
+                      </button>
+                    )}
+                    
+                    {source_code_link && !isMobileApp && (
                       <a
                         href={source_code_link}
                         target="_blank"
@@ -301,25 +430,73 @@ const ProjectModal = memo(({ project, onClose, isOpen }) => {
 
                 {/* Project Details */}
                 <div className="bg-gray-900/70 rounded-2xl p-8 border border-gray-800">
-                  <h4 className="text-white font-bold text-2xl mb-6">Project Details</h4>
+                  <h4 className="text-white font-bold text-2xl mb-6">
+                    {isMobileApp ? 'App' : 'Project'} Details
+                  </h4>
                   <div className="space-y-6">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400 text-lg">Category</span>
-                      <span className="text-white font-semibold text-lg">{tags[0]?.name || 'Web App'}</span>
+                      <span className="text-white font-semibold text-lg">
+                        {isMobileApp ? 'Mobile App' : (tags[0]?.name || 'Web App')}
+                      </span>
                     </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-lg">Platform</span>
+                      <span className="text-white font-semibold text-lg">
+                        {isMobileApp ? 'Android/iOS' : 'Web'}
+                      </span>
+                    </div>
+                    
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400 text-lg">Status</span>
                       <span className="text-green-400 font-semibold text-lg flex items-center gap-2">
                         <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                        Live
+                        {isMobileApp ? 'Available' : 'Live'}
                       </span>
                     </div>
+                    
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400 text-lg">Year</span>
                       <span className="text-white font-semibold text-lg">{year}</span>
                     </div>
+                    
+                    {isMobileApp && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-400 text-lg">Framework</span>
+                        <span className="text-white font-semibold text-lg">Flutter</span>
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Additional Mobile App Info */}
+                {isMobileApp && (
+                  <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl p-8 border border-blue-800/30">
+                    <h4 className="text-white font-bold text-2xl mb-6 flex items-center gap-3">
+                      <Smartphone size={24} />
+                      Mobile Features
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3 text-blue-300">
+                        <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                        Cross-platform compatibility
+                      </div>
+                      <div className="flex items-center gap-3 text-purple-300">
+                        <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                        Offline functionality
+                      </div>
+                      <div className="flex items-center gap-3 text-green-300">
+                        <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                        Push notifications
+                      </div>
+                      <div className="flex items-center gap-3 text-orange-300">
+                        <span className="w-2 h-2 bg-orange-400 rounded-full"></span>
+                        Voice recognition
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

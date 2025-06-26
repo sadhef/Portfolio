@@ -210,7 +210,7 @@ const Hero = () => {
   const firstName = "Mohammed";
   const lastName = "Sadhef";
 
-  const roles = ["Full Stack Developer", "Cloud /DevOps Engineer", "Python Developer"];
+  const roles = ["Full Stack Developer", "Cloud & DevOps Engineer", "Python Developer"];
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
