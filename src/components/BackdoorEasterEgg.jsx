@@ -1,3 +1,4 @@
+// src/components/BackdoorEasterEgg.jsx
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -142,16 +143,7 @@ const BackdoorEasterEgg = () => {
       />
 
       {/* ====== PROGRESS INDICATORS ====== */}
-      {logoClickCount > 0 && logoClickCount < REQUIRED_LOGO_CLICKS && (
-        <motion.div
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 100 }}
-          className="fixed top-20 right-4 z-50 bg-green-500/90 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg"
-        >
-          🎯 Logo clicks: {logoClickCount}/{REQUIRED_LOGO_CLICKS}
-        </motion.div>
-      )}
+      {/* Logo click notification removed - keeping it secret */}
 
       {/* ====== SUCCESS MODAL ====== */}
       <AnimatePresence>
